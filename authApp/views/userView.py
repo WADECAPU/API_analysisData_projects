@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from authApp.utils import get_valid_token_data
+from authApp.utils import get_valid_token_data, validate_token_owner
 from authApp.models import User
 from authApp.serializers import UserSerializer
 
@@ -32,15 +32,15 @@ class UserListView(generics.ListAPIView):
 
 
 class UserDetailView(generics.RetrieveAPIView):
+    '''Esta vista primero valida el token y si hay algún error retorna una respuesta de error,
+      en caso contrario llama a la función get, put o delete de la clase padre y devuelve su resultado'''
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
-        valid_data =  get_valid_token_data(request)
+        verificacion = validate_token_owner(request, kwargs)
+        if verificacion:#si hay algún error, se devuelve una respuesta de error y si es lo contrario sigue con el proceso
+            return verificacion
         
-        if valid_data['user_id'] != kwargs['pk']:
-            stringResponse = {'detail':'Unauthorized Request'}
-            return Response(stringResponse, status=status.HTTP_401_UNAUTHORIZED)
-
         return super().get(request, *args, **kwargs)
