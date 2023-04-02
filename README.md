@@ -1,4 +1,4 @@
- =API con Django Rest Framework y Simple JWT=
+## API con Django Rest Framework y Simple JWT=
 
 Este proyecto es una API que permite a los usuarios crear noticias y comentarios, y actualizarlos si son los propios creadores. La API utiliza Django Rest Framework y Simple JWT para la autenticación y la generación de tokens.
 
